@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+
+	"github.com/sirupsen/logrus"
+	"github.com/tangx/ingress-operator/cmd/squid/config"
 	"github.com/yeqown/log"
 
 	"github.com/valyala/fasthttp"
@@ -15,8 +19,17 @@ func ProxyHandler(ctx *fasthttp.RequestCtx) {
 	proxyServer3.ServeHTTP(ctx)
 }
 
+var cfg = config.NewConfig()
+
 func main() {
-	if err := fasthttp.ListenAndServe(":8081", ProxyHandler); err != nil {
+	cfg.Initial().ReadConfig()
+
+	logrus.Debugf("%+v", cfg)
+
+	if err := fasthttp.ListenAndServe(
+		fmt.Sprintf(":%d", cfg.Server.Port),
+		ProxyHandler,
+	); err != nil {
 		log.Fatal(err)
 	}
 }

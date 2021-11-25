@@ -1,0 +1,14 @@
+
+ingresses:
+  rules:
+    - host: www.baidu.com
+      http:
+        paths:
+        - backend:
+            service:
+              name: /search
+              port:
+                number: 80
+          pathType: ImplementationSpecific
+          # pathType: Exact
+          # pathType: Prefix

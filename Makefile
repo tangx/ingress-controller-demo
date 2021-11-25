@@ -1,6 +1,6 @@
 
 
-WORKDIR ?= cmd/ingress-proxy
+WORKDIR ?= cmd/squid
 
 up: tidy
 	cd $(WORKDIR) && go run .

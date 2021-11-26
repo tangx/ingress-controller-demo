@@ -26,8 +26,10 @@ func NewRouterManager() *RouterManager {
 func (mgr *RouterManager) ParseRules(cfg *config.Config) {
 	for _, ing := range cfg.Ingresses {
 		for _, rule := range ing.Rules {
+
+			// 增加 mux host 验证
 			route := mgr.NewRoute().Host(rule.Host)
-			// route = route.Host("foo.com")
+
 			for _, path := range rule.HTTP.Paths {
 				// 使用 path 创建 mux Route
 				mgr.parsePath(route, path)
@@ -37,6 +39,7 @@ func (mgr *RouterManager) ParseRules(cfg *config.Config) {
 }
 
 func (mgr *RouterManager) parsePath(route *mux.Route, path netv1.HTTPIngressPath) {
+
 	handler := NewMuxHandler(path.Backend.Service.Name, path.Backend.Service.Port.Number)
 
 	// 创建 mux 路由， 并绑定 handler

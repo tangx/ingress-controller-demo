@@ -19,10 +19,6 @@ func NewRuleManager() *RuleManager {
 	}
 }
 
-// var (
-// 	MuxRouter = mux.NewRouter()
-// )
-
 func (mgr *RuleManager) ParseRules(cfg *config.Config) {
 	for _, rule := range cfg.Ingresses.Rules {
 		for _, path := range rule.HTTP.Paths {

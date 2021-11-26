@@ -3,6 +3,7 @@ module github.com/tangx/ingress-operator
 go 1.17
 
 require (
+	github.com/gorilla/mux v1.8.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/valyala/fasthttp v1.31.0
 	github.com/yeqown/fasthttp-reverse-proxy/v2 v2.2.1

@@ -1,0 +1,15 @@
+
+ingresses:
+  rules:
+  - host: foo.com
+    http:
+      paths:
+      - backend:
+          service:
+            name: www.jtthink.com
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+        # pathType: Exact
+        # pathType: Prefix

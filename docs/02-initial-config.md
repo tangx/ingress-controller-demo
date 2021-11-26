@@ -18,6 +18,16 @@ func (cfg *Config) ReadConfig() {
 		}
 	}
 }
+
+func (cfg *Config) readconfig(file string) error {
+	b, err := os.ReadFile(file)
+	if err != nil {
+		logrus.Warnf("read config failed: %v", err)
+		return err
+	}
+
+	return yaml.Unmarshal(b, cfg)
+}
 ```
 
 除了读取配置文件之外， **生成** 默认的配置文件也是非常重要的。 

@@ -8,6 +8,7 @@ import (
 	"github.com/tangx/ingress-operator/pkg/httpx"
 	"github.com/valyala/fasthttp"
 	proxy "github.com/yeqown/fasthttp-reverse-proxy/v2"
+	v1 "k8s.io/api/networking/v1"
 )
 
 type RouterManager struct {
@@ -27,7 +28,17 @@ func (mgr *RouterManager) ParseRules(cfg *config.Config) {
 			handler := NewMuxHandler(path.Backend.Service.Name, path.Backend.Service.Port.Number)
 
 			// 创建 mux 路由， 并绑定 handler
-			mgr.NewRoute().Path(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
+			// 根据 path 类型创建不同的匹配方式
+			switch *path.PathType {
+			case v1.PathTypeExact:
+				mgr.NewRoute().Path(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
+			case v1.PathTypeImplementationSpecific:
+				// 使用下一条规则
+				fallthrough
+			default:
+				// 默认为
+				mgr.NewRoute().PathPrefix(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
+			}
 		}
 	}
 }

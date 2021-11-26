@@ -9,7 +9,7 @@ ingresses:
             name: www.jtthink.com
             port:
               number: 80
-        path: /
+        path: "/"
         pathType: ImplementationSpecific
         # pathType: Exact
         # pathType: Prefix

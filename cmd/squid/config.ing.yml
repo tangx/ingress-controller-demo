@@ -10,6 +10,6 @@ ingresses:
               port:
                 number: 80
           path: "/"
-          pathType: ImplementationSpecific
+          # pathType: ImplementationSpecific
           # pathType: Exact
           # pathType: Prefix

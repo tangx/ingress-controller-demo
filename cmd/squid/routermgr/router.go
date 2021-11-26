@@ -35,16 +35,9 @@ func (mgr *RouterManager) ParseRules(cfg *config.Config) {
 func (mgr *RouterManager) parsePath(path netv1.HTTPIngressPath) {
 	handler := NewMuxHandler(path.Backend.Service.Name, path.Backend.Service.Port.Number)
 
-	// 设置 pathType 默认值
-	if path.PathType == nil {
-		path.PathType = func(s netv1.PathType) *netv1.PathType {
-			return &s
-		}(netv1.PathTypePrefix)
-	}
-
 	// 创建 mux 路由， 并绑定 handler
 	// 根据 path 类型创建不同的匹配方式
-	switch *path.PathType {
+	switch mgr.pathType(path.PathType) {
 	case netv1.PathTypeExact:
 		mgr.NewRoute().Path(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
 	case netv1.PathTypeImplementationSpecific:
@@ -54,6 +47,15 @@ func (mgr *RouterManager) parsePath(path netv1.HTTPIngressPath) {
 		// 默认为
 		mgr.NewRoute().PathPrefix(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
 	}
+}
+
+// pathType 返回默认的 path type
+func (mgr *RouterManager) pathType(typ *netv1.PathType) netv1.PathType {
+	if typ == nil {
+		return netv1.PathTypePrefix
+	}
+
+	return *typ
 }
 
 // GetReverseProxy 根据 fasthttp request 获取反代的 proxy handler

@@ -22,31 +22,37 @@ func NewRouterManager() *RouterManager {
 }
 
 func (mgr *RouterManager) ParseRules(cfg *config.Config) {
-	for _, rule := range cfg.Ingresses.Rules {
-		for _, path := range rule.HTTP.Paths {
-			// 使用 path 创建 mux Route
-			handler := NewMuxHandler(path.Backend.Service.Name, path.Backend.Service.Port.Number)
-
-			// 设置 pathType 默认值
-			if path.PathType == nil {
-				path.PathType = func(s netv1.PathType) *netv1.PathType {
-					return &s
-				}(netv1.PathTypePrefix)
-			}
-
-			// 创建 mux 路由， 并绑定 handler
-			// 根据 path 类型创建不同的匹配方式
-			switch *path.PathType {
-			case netv1.PathTypeExact:
-				mgr.NewRoute().Path(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
-			case netv1.PathTypeImplementationSpecific:
-				// 使用下一条规则
-				fallthrough
-			default:
-				// 默认为
-				mgr.NewRoute().PathPrefix(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
+	for _, ing := range cfg.Ingresses {
+		for _, rule := range ing.Rules {
+			for _, path := range rule.HTTP.Paths {
+				// 使用 path 创建 mux Route
+				mgr.parsePath(path)
 			}
 		}
+	}
+}
+
+func (mgr *RouterManager) parsePath(path netv1.HTTPIngressPath) {
+	handler := NewMuxHandler(path.Backend.Service.Name, path.Backend.Service.Port.Number)
+
+	// 设置 pathType 默认值
+	if path.PathType == nil {
+		path.PathType = func(s netv1.PathType) *netv1.PathType {
+			return &s
+		}(netv1.PathTypePrefix)
+	}
+
+	// 创建 mux 路由， 并绑定 handler
+	// 根据 path 类型创建不同的匹配方式
+	switch *path.PathType {
+	case netv1.PathTypeExact:
+		mgr.NewRoute().Path(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
+	case netv1.PathTypeImplementationSpecific:
+		// 使用下一条规则
+		fallthrough
+	default:
+		// 默认为
+		mgr.NewRoute().PathPrefix(path.Path).Methods(httpx.MethodAny()...).Handler(handler)
 	}
 }
 

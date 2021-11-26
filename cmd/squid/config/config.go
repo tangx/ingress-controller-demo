@@ -13,8 +13,8 @@ type Server struct {
 }
 
 type Config struct {
-	Server    Server            `json:"server,omitempty" yaml:"server,omitempty"`
-	Ingresses netv1.IngressSpec `json:"ingresses,omitempty" yaml:"ingresses,omitempty"`
+	Server    Server              `json:"server,omitempty" yaml:"server,omitempty"`
+	Ingresses []netv1.IngressSpec `json:"ingresses,omitempty" yaml:"ingresses,omitempty"`
 }
 
 func NewConfig() *Config {

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/sirupsen/logrus"
 	"github.com/tangx/ingress-operator/cmd/squid/config"
@@ -25,5 +26,11 @@ func main() {
 		mgr.ProxyHandler,
 	); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func init() {
+	if os.Getenv("env") == "local" {
+		logrus.SetLevel(logrus.DebugLevel)
 	}
 }

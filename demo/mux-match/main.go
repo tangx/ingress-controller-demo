@@ -12,8 +12,8 @@ func main() {
 	r := mux.NewRouter()
 
 	// 两条路由
-	r.NewRoute().Path("/").Methods("GET")
-	r.NewRoute().Path(`/user/{id:\d+}`).Methods(httpx.MethodAny()...)
+	r.NewRoute().Host("foo.com").Path("/").Methods("GET")
+	r.NewRoute().Host("foo.com").Path(`/user/{id:\d+}`).Methods(httpx.MethodAny()...)
 
 	// 创建 matcher
 	match := &mux.RouteMatch{}
@@ -25,23 +25,8 @@ func main() {
 	}{
 		{
 			Method: http.MethodGet,
-			URL:    "https://www.baidu.com/",
+			URL:    "http://foo.com/",
 			Wanted: true,
-		},
-		{
-			Method: http.MethodPost,
-			URL:    "https://www.tangx.in/user/123?name=tangxin",
-			Wanted: true,
-		},
-		{
-			Method: http.MethodPut,
-			URL:    "https://www.tangx.in/user/123",
-			Wanted: true,
-		},
-		{
-			Method: http.MethodPost,
-			URL:    "/",
-			Wanted: false,
 		},
 	} {
 		// 创建一个 请求

@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
-	"github.com/sirupsen/logrus"
 	"github.com/tangx/ingress-operator/cmd/squid/config"
 	"github.com/yeqown/log"
 
@@ -60,12 +58,8 @@ func ProxyHandler(ctx *fasthttp.RequestCtx) {
 var cfg = config.NewConfig()
 
 func main() {
-	cfg.Initial().ReadConfig()
 
-	logrus.Debugf("%+v", cfg)
-
-	addr := fmt.Sprintf(":%d", cfg.Server.Port)
-	logrus.Infof("reverse proxy listen %s", addr)
+	addr := ":8081"
 	if err := fasthttp.ListenAndServe(
 		addr,
 		ProxyHandler,

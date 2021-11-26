@@ -30,7 +30,7 @@ func main() {
 		},
 		{
 			Method: http.MethodPost,
-			URL:    "https://www.tangx.in/user/123",
+			URL:    "https://www.tangx.in/user/123?name=tangxin",
 			Wanted: true,
 		},
 		{

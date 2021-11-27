@@ -15,15 +15,19 @@ import (
 
 type RouterManager struct {
 	*mux.Router
+	requestFilters  []ProxyFilter
+	responseFilters []ProxyFilter
 }
 
 func NewRouterManager() *RouterManager {
 	return &RouterManager{
-		Router: mux.NewRouter(),
+		Router:          mux.NewRouter(),
+		requestFilters:  make([]ProxyFilter, 0),
+		responseFilters: make([]ProxyFilter, 0),
 	}
 }
 
-func (mgr *RouterManager) ParseRules(cfg *config.Config) {
+func (mgr *RouterManager) ParseRules(cfg *config.Config) *RouterManager {
 	for _, ing := range cfg.Ingresses {
 		for _, rule := range ing.Rules {
 
@@ -36,6 +40,8 @@ func (mgr *RouterManager) ParseRules(cfg *config.Config) {
 			}
 		}
 	}
+
+	return mgr
 }
 
 func (mgr *RouterManager) parsePath(route *mux.Route, path netv1.HTTPIngressPath) {
@@ -99,5 +105,36 @@ func (mgr *RouterManager) ProxyHandler(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
+	for _, filter := range mgr.requestFilters {
+		filter.Do(ctx)
+	}
+
 	proxy.ServeHTTP(ctx)
+
+	for _, filter := range mgr.responseFilters {
+		filter.Do(ctx)
+	}
 }
+
+func (mgr *RouterManager) ProxyHandlerWithOptions(filters ...ProxyFilter) {
+	for _, filter := range filters {
+		switch filter.Type() {
+		case FilterType_Request:
+			mgr.requestFilters = append(mgr.requestFilters, filter)
+		case FilterType_Response:
+			mgr.responseFilters = append(mgr.responseFilters, filter)
+		}
+	}
+}
+
+type ProxyFilter interface {
+	Type() FilterType
+	Do(ctx *fasthttp.RequestCtx)
+}
+
+type FilterType string
+
+const (
+	FilterType_Request  FilterType = "RequestFilter"
+	FilterType_Response FilterType = "ResponseFilter"
+)

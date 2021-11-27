@@ -6,9 +6,9 @@ ingresses:
         paths:
         - backend:
             service:
-              name: www.jtthink.com
+              name: 127.0.0.1 
               port:
-                number: 80
+                number: 8099
           path: "/"
           # pathType: ImplementationSpecific
           # pathType: Exact

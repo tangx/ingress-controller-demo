@@ -19,7 +19,7 @@ func main() {
 
 	mgr := routermgr.NewRouterManager()
 	mgr.ParseRules(cfg).
-		ProxyHandlerWithOptions(
+		WithFilters(
 			&filters.RequestHeaderFilter{},
 			&filters.ResponseHeaderFilter{},
 		)

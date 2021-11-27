@@ -1,15 +1,51 @@
 
 ingresses:
-  - rules:
-    - host: foo.com
-      http:
-        paths:
-        - backend:
-            service:
-              name: 127.0.0.1 
-              port:
-                number: 8099
-          path: "/"
-          # pathType: ImplementationSpecific
-          # pathType: Exact
-          # pathType: Prefix
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      creationTimestamp: null
+      name: simple
+      annotations:
+        squid.ingress.tangx.in/add-request-header: foo-key1=value1;foo-key2=value2;foo-key3
+        squid.ingress.tangx.in/add-response-header: v1=foo-key1;v2=foo-key2
+    spec:
+      rules:
+      - host: foo.com
+        http:
+          paths:
+          - backend:
+              service:
+                name: 127.0.0.1
+                port:
+                  number: 8099
+            path: /
+            pathType: prefix
+      tls:
+      - hosts:
+        - foo.com
+        secretName: my-cert
+
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      creationTimestamp: null
+      name: simple
+      # annotations:
+      #   squid.ingress.tangx.in/add-request-header: bar-key1=value1;bar-key2=value2;bar-key3
+      #   squid.ingress.tangx.in/add-response-header: v1=bar-key1;v2=bar-key2
+    spec:
+      rules:
+      - host: bar.com
+        http:
+          paths:
+          - backend:
+              service:
+                name: 127.0.0.1
+                port:
+                  number: 8099
+            path: /
+            pathType: prefix
+      tls:
+      - hosts:
+        - foo.com
+        secretName: my-cert

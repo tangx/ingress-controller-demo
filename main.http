@@ -1,8 +1,12 @@
 
 
 
-
-
+### foo.com
 
 GET http://127.0.0.1:8081/ping
 Host: foo.com
+
+### bar.com
+
+GET http://127.0.0.1:8081/ping
+Host: bar.com

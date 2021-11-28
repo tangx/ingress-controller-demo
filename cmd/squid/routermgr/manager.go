@@ -26,7 +26,13 @@ func NewRouterManager() *RouterManager {
 	}
 }
 
+// func (mgr *RouterManager) NewRouter() *RouterManager {
+// 	mgr.Router = mux.NewRouter()
+// 	return mgr
+// }
+
 func (mgr *RouterManager) ParseRules(cfg *config.Config) *RouterManager {
+	mgr.Router = mux.NewRouter()
 	for _, ing := range cfg.Ingresses {
 		for _, rule := range ing.Spec.Rules {
 
@@ -95,6 +101,10 @@ func httpRequest(req fasthttp.Request) *http.Request {
 func (mgr *RouterManager) ProxyHandler(ctx *fasthttp.RequestCtx) {
 
 	handler := mgr.GetMuxHandler(ctx.Request)
+	if handler == nil {
+		return
+	}
+
 	proxy := handler.ReverseProxy()
 	if proxy == nil {
 		return

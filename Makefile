@@ -9,4 +9,4 @@ tidy:
 	go mod tidy
 
 docker:
-	docker build -t cr.docker.tangx.in/controllers/squid:v1.0.01 .
+	docker build -t cr.docker.tangx.in/controllers/squid:v1.0.2 .

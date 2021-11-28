@@ -56,7 +56,7 @@ func main() {
 	}()
 
 	logrus.Error("start to watch ")
-	err = watcher.Add("config.ing.yml")
+	err = watcher.Add("config.yml")
 	if err != nil {
 		logrus.Fatal(err)
 	}

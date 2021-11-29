@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/sirupsen/logrus"
@@ -12,6 +13,8 @@ import (
 	"github.com/tangx/ingress-operator/cmd/squid/routermgr"
 	"github.com/valyala/fasthttp"
 )
+
+var mu sync.Mutex
 
 func main() {
 
@@ -42,9 +45,13 @@ func main() {
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					log.Println("modified file:", event.Name)
 
+					mu.Lock()
+
 					cfg.ReadConfig()
-					// mgr.Router = mux.NewRouter()
 					mgr.ParseRules(cfg)
+
+					mu.Unlock()
+
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
